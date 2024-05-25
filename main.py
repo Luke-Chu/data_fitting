@@ -48,7 +48,6 @@ class DataFittingApp(QMainWindow):
         # 设置全局字体 默认就好
         # self.set_global_font()
 
-
     def set_global_font(self):
         # 设置中文为宋体
         chinese_font = QFont("SimSun", 11)
@@ -132,16 +131,29 @@ class DataFittingApp(QMainWindow):
     # 文件输入按钮的槽函数
     def import_csv(self):
         options = QFileDialog.Options()
-        file_name, _ = QFileDialog.getOpenFileName(self, "请选择CSV数据文件", "", "CSV Files (*.csv);;All Files (*)", options=options)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Import CSV/TXT", "",
+                                                   "CSV Files (*.csv);;Text Files (*.txt);;All Files (*)",
+                                                   options=options)
         if file_name:
-            with open(file_name, newline='') as csvfile:
-                reader = csv.reader(csvfile)
-                x_values = []
-                y_values = []
-                for row in reader:
-                    if len(row) >= 2:
-                        x_values.append(row[0])
-                        y_values.append(row[1])
+            x_values = []
+            y_values = []
+            if file_name.endswith('.csv'):
+                with open(file_name, newline='') as csvfile:
+                    reader = csv.reader(csvfile)
+                    for row in reader:
+                        if len(row) >= 2:
+                            x_values.append(row[0])
+                            y_values.append(row[1])
+            elif file_name.endswith('.txt'):
+                with open(file_name, 'r') as txtfile:
+                    lines = txtfile.readlines()
+                    for line in lines:
+                        row = re.split(r'[ ,]+', line.strip())
+                        if len(row) >= 2:
+                            x_values.append(row[0])
+                            y_values.append(row[1])
+
+            # 将数据填充到输入框中
             self.xInput.setText(','.join(x_values))
             self.yInput.setText(','.join(y_values))
 
