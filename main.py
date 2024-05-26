@@ -48,6 +48,10 @@ class DataFittingApp(QMainWindow):
         # 设置全局字体 默认就好
         # self.set_global_font()
 
+        # 用于定位是否修改了数据列表的某个数据
+        self.old_value = None
+        self.current_item = None
+
     def set_global_font(self):
         # 设置中文为宋体
         chinese_font = QFont("SimSun", 11)
@@ -164,8 +168,10 @@ class DataFittingApp(QMainWindow):
         self.tableWidget.setHorizontalHeaderLabels(["X", "Y"])
         # 设置水平表头列的自动调整模式为拉伸
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # 连接 currentItemChanged 信号到槽函数
+        self.tableWidget.currentItemChanged.connect(self.onCurrentItemChanged)
         # 将单元格修改信号连接到槽函数
-        self.tableWidget.cellChanged.connect(self.cell_changed)
+        self.tableWidget.itemChanged.connect(self.onItemChanged)
 
     # 创建绘图区
     def createPlot(self):
@@ -187,13 +193,23 @@ class DataFittingApp(QMainWindow):
             self.degreeLabel.setParent(None)
             self.degreeInput.setParent(None)
 
+    # 在用户切换当前单元格时触发，记录当前单元格和其旧值
+    def onCurrentItemChanged(self, current):
+        if current is not None:
+            self.current_item = current
+            self.old_value = current.text()  # 确保初始 old_value 是当前项的值
+
     # 表格数据改变的槽函数
-    def cell_changed(self, row, column):
-        # 获取修改后的数据，如果是空则提示错误
-        item = self.tableWidget.item(row, column)
-        if item is None:
-            show_error_message('无效值')
-            return
+    def onItemChanged(self, item):
+        if self.current_item is item:
+            new_value = item.text()
+            if new_value == "":  # 如果新值为空，则恢复旧值
+                item.setText(self.old_value)
+                show_error_message('无效值')
+                return
+            else:
+                # 更新旧值为新值
+                self.old_value = new_value
 
         # 获取所有数据并排序
         self.x_data, self.y_data = self.get_all_data()
