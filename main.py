@@ -308,13 +308,22 @@ class DataFittingApp(QMainWindow):
                 coeffs = polynomialFit(self.x_data, self.y_data, degree)
                 self.plotData(coeffs, fit_type)
             elif fit_type == "Exponential":
+                # 对于指数函数拟合来说，点的个数至少为2个，因为有2个待求系数
+                if row_count < 2:
+                    raise ValueError(f'数据点不足以支撑拟合拟合函数')
                 # 返回即残差最小时参数的值
                 popt, _ = curve_fit(exponential, self.x_data, self.y_data)
                 self.plotData(popt, fit_type)
             elif fit_type == "Logarithmic":
+                # 对于对数函数拟合来说，点的个数至少为2个，因为有2个待求系数
+                if row_count < 2:
+                    raise ValueError(f'数据点不足以支撑拟合对数函数')
                 popt, _ = curve_fit(logarithmic, self.x_data, self.y_data)
                 self.plotData(popt, fit_type)
             elif fit_type == "Sine":
+                # 对于正弦函数拟合来说，点的个数至少为3个，因为有3个待求系数
+                if row_count < 3:
+                    raise ValueError(f'数据点不足以支撑拟合对数函数')
                 popt, _ = curve_fit(sine, self.x_data, self.y_data)
                 self.plotData(popt, fit_type)
         except ValueError as e:
