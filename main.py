@@ -222,8 +222,8 @@ class DataFittingApp(QMainWindow):
     def addDataPoint(self):
         try:
             # 用了一个正则表达式匹配一个逗号和一个空格的任意组合
-            x_values = re.split(r'[ ,]+', self.xInput.text())
-            y_values = re.split(r'[ ,]+', self.yInput.text())
+            x_values = re.split(r'[ ,]+', self.xInput.text().strip())
+            y_values = re.split(r'[ ,]+', self.yInput.text().strip())
             if len(x_values) != len(y_values):
                 raise ValueError("数据长度不匹配")
             if not self.xInput.text().strip():
