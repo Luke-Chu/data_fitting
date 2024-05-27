@@ -148,23 +148,42 @@ UML类图描述了数据拟合大师的核心类及其主要方法。```DataFitt
 
 ### 3.1基于最小二乘法原理求线性方程组
 
-对于给定数据点(xi,yi)和多项式次数n，需要求解多项式的系数<img src="images/var2.jpg" style="zoom:5%;" />，使得多项式（1)的误差平方和最小。
+对于给定数据点$`\left( {{x_i},{y_i}} \right)`$和多项式次数$`n`$，需要求解多项式的系数$`{a_n},{a_{n - 1}}, \ldots ,{a_0}`$，使得多项式(1)的误差平方和最小。
 
-![](images/eq1.svg)
+```math
+\begin{array}{*{20}{c}}
+{P\left( x \right) = {a_n}{x^n} + {a_{n - 1}}{x^{n - 1}} +  \ldots  + {a_1}{x^1} + {a_0}{x^0} \;}\tag{1}
+\end{array}
+```
 
-将多项式（1）与每个yi求误差，得平方和式（2）。
+将多项式(1)与每个$`{y_i}`$求误差，得平方和式(2)。
 
-![](images/eq2.svg)
+```math
+\begin{array}{*{20}{c}}
+{J = \mathop \sum \limits_{i = 1}^k {{\left( {P\left( {{x_i}} \right) - {y_i}} \right)}^2}}\tag{2}
+\end{array}
+```
 
-其中k是数据点的个数。函数拟合的目标是使式（2）最小，而式（2）是关于系数<img src="images/var2.jpg" style="zoom:5%;" />的多元函数。于是问题转换成多元函数求极值问题，根据多元函数求极值的基本条件“偏导为零”，有
+其中$`k`$是数据点的个数。函数拟合的目标是使式(2)最小，而式(2)是关于系数$`{a_n},{a_{n - 1}}, \ldots ,{a_0}`$的多元函数。于是问题转换成多元函数求极值问题，根据多元函数求极值的基本条件“偏导为零”，有
 
-![](images/eq3.svg)
+```math
+\left\{\begin{array}{c}
+a_{n} \sum_{i=1}^{k} x_{i}^{n}+a_{n-1} \sum_{i=1}^{k} x_{i}^{n-1}+\cdots+a_{0} \sum_{i=1}^{k} x_{i}^{0}=\sum_{i=1}^{k} x_{i}^{0} y_{i} \\
+a_{n} \sum_{i=1}^{k} x_{i}^{n+1}+a_{n-1} \sum_{i=1}^{k} x_{i}^{n}+\cdots+a_{0} \sum_{i=1}^{k} x_{i}^{1}=\sum_{i=1}^{k} x_{i}^{1} y_{i} \\
+\vdots \\
+a_{n} \sum_{i=1}^{k} x_{i}^{n+n}+a_{n-1} \sum_{i=1}^{k} x_{i}^{n+n-1}+\cdots+a_{0} \sum_{i=1}^{k} x_{i}^{n}=\sum_{i=1}^{k} x_{i}^{n} y_{i}\tag{3}
+\end{array}\right.
+```
 
 即
 
-![](images/eq4.svg)
+```math
+\begin{array}{*{20}{c}}
+{Ax = b}\tag{4}
+\end{array}
+```
 
-其中A是一个n + 1 X n + 1的矩阵，由已知数据点可以求得；b是一个长度为n+1的向量，由已知数据点可以求得；x是线性方程组所求的未知量，即多项式的系数。该部分的关键实现代码如下：
+其中$`A`$是一个$`n + 1 \times n + 1`$的矩阵，由已知数据点可以求得；$`b`$是一个长度为$`n+1`$的向量，由已知数据点可以求得；$`x`$是线性方程组所求的未知量，即多项式的系数。该部分的关键实现代码如下：
 
 ```python
 def polynomialFit(x, y, degree):
