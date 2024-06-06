@@ -20,8 +20,24 @@ class DataFittingApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # 获取屏幕分辨率
+        screen = QApplication.primaryScreen()
+        screen_size = screen.size()
+        screen_width = screen_size.width()
+        screen_height = screen_size.height()
+
+        # 计算窗口大小为屏幕的三分之二
+        window_width = screen_width * 1 // 2
+        window_height = screen_height * 2 // 3
+
+        # 计算窗口左上角位置，使其居中显示
+        window_x = (screen_width - window_width) // 2
+        window_y = (screen_height - window_height) // 2
+
+        # 设置窗口几何参数
+        self.setGeometry(window_x, window_y, window_width, window_height)
         self.setWindowTitle("Data Fitting Application")
-        self.setGeometry(100, 100, 800, 600)
+        # self.setGeometry(100, 100, 800, 600)
 
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
