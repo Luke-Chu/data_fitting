@@ -4,11 +4,12 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QPushButton, QLineEdit, QLabel, QComboBox,
                              QFormLayout, QTableWidget, QTableWidgetItem,
-                             QHeaderView, QGridLayout, QHBoxLayout, QFileDialog, QSizePolicy)
+                             QHeaderView, QGridLayout, QHBoxLayout, QFileDialog, QSizePolicy, QSplitter)
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from scipy.optimize import curve_fit
 
@@ -47,9 +48,20 @@ class DataFittingApp(QMainWindow):
         self.createTable()
         self.createPlot()
 
-        self.layout.addWidget(self.inputForm)
-        self.layout.addWidget(self.tableWidget)
-        self.layout.addWidget(self.canvas)  # 将画布添加到布局中
+        # 设置大小策略
+        self.inputForm.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.tableWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        # 创建QSplitter
+        splitter = QSplitter(Qt.Vertical)
+
+        # 将控件添加到QSplitter
+        splitter.addWidget(self.inputForm)
+        splitter.addWidget(self.tableWidget)
+        splitter.addWidget(self.canvas)
+
+        self.layout.addWidget(splitter)
 
         self.x_data = []
         self.y_data = []
