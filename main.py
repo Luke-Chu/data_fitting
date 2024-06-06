@@ -102,8 +102,7 @@ class DataFittingApp(QMainWindow):
         self.csv_button = QPushButton("文件\n导入")
         self.csv_button.clicked.connect(self.import_csv)
         # 设置按钮大小
-        self.csv_button.setFixedSize(48, 48)
-        self.csv_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.csv_button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         hexInputLayout.addLayout(vInputLayout)
         hexInputLayout.addWidget(self.csv_button)
 
