@@ -222,6 +222,7 @@ class DataFittingApp(QMainWindow):
 
     # 创建绘图区
     def createPlot(self):
+        plt.rcParams['font.size'] = 14
         plt.rcParams['font.sans-serif'] = ['SimSun', 'Times New Roman']  # 宋体和Time New Roman
         self.figure, self.ax = plt.subplots()
         # 将 Matplotlib 图表嵌入到 GUI 应用程序中
