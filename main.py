@@ -43,13 +43,15 @@ class DataFittingApp(QMainWindow):
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
         self.layout = QVBoxLayout(self.centralWidget)
+        # 设置布局的间距为0
+        self.layout.setSpacing(0)
 
         self.createInputForm()
         self.createTable()
         self.createPlot()
 
         # 设置大小策略
-        self.inputForm.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.inputForm.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.tableWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -60,6 +62,10 @@ class DataFittingApp(QMainWindow):
         splitter.addWidget(self.inputForm)
         splitter.addWidget(self.tableWidget)
         splitter.addWidget(self.canvas)
+
+        splitter.setStretchFactor(0, 1)
+        splitter.setStretchFactor(1, 2)
+        splitter.setStretchFactor(2, 1)
 
         self.layout.addWidget(splitter)
 
@@ -97,7 +103,7 @@ class DataFittingApp(QMainWindow):
         hexLayout = QHBoxLayout()  # 表单上半部分的水平布局
         formLayout1 = QVBoxLayout()  # 表单上半部分左边表单布局
         delLayout = QGridLayout()  # 表单上半部分右边删除按钮的布局
-        self.formLayout2 = QFormLayout()  # 表单下半部分布局
+        self.formLayout2 = QVBoxLayout()  # 表单下半部分布局
 
         # 添加表单上半左边部分组件
         self.xInput = QLineEdit()
@@ -105,9 +111,15 @@ class DataFittingApp(QMainWindow):
         self.yInput = QLineEdit()
         self.yInput.setPlaceholderText("请输入因变量数据，以逗号或空格分隔")
         # 给个垂直布局
-        vInputLayout = QFormLayout()
-        vInputLayout.addRow("X:", self.xInput)
-        vInputLayout.addRow("Y:", self.yInput)
+        vInputLayout = QVBoxLayout()
+        xInputLayout = QHBoxLayout()
+        xInputLayout.addWidget(QLabel("X:"))
+        xInputLayout.addWidget(self.xInput)
+        yInputLayout = QHBoxLayout()
+        yInputLayout.addWidget(QLabel("Y:"))
+        yInputLayout.addWidget(self.yInput)
+        vInputLayout.addLayout(xInputLayout)
+        vInputLayout.addLayout(yInputLayout)
         # 组合输入框和文件输入
         hexInputLayout = QHBoxLayout()
         # CSV 文件输入按钮
@@ -140,21 +152,29 @@ class DataFittingApp(QMainWindow):
         # 创建下拉选择框，用于选择拟合函数
         self.functionComboBox = QComboBox()
         self.functionComboBox.addItems(["Polynomial", "Exponential", "Logarithmic", "Sine"])
+        self.functionComboBox.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.functionComboBox.setMinimumHeight(self.xInput.sizeHint().height())
         # 连接信号与槽
         self.functionComboBox.currentIndexChanged.connect(self.onComboBoxIndexChanged)
         # 添加多项式次数组件
-        self.degreeLabel = QLabel("多项式次数：")
+        self.degreeLabel = QLabel("多项式的次数：")
         self.degreeInput = QLineEdit()
         self.degreeInput.setValidator(QIntValidator(0, 9))  # 限制输入次数范围
         self.degreeInput.setPlaceholderText("请输入多项式最高次数")
         # 拟合按钮组件
         self.fitButton = QPushButton("数据拟合")
         self.fitButton.clicked.connect(self.fitData)
+        # 水平布局
+        fSelectLayout = QHBoxLayout()
+        fSelectLayout.addWidget(self.functionLabel)
+        fSelectLayout.addWidget(self.functionComboBox)
+        dInputLayout = QHBoxLayout()
+        dInputLayout.addWidget(self.degreeLabel)
+        dInputLayout.addWidget(self.degreeInput)
         # 添加下半组件到布局
-        self.formLayout2.addRow(self.functionLabel, self.functionComboBox)
-        self.formLayout2.addRow(self.degreeLabel, self.degreeInput)
-        self.formLayout2.addRow(self.fitButton)
-
+        self.formLayout2.addLayout(fSelectLayout)
+        self.formLayout2.addLayout(dInputLayout)
+        self.formLayout2.addWidget(self.fitButton)
         # 组合布局
         self.inputLayout.addLayout(hexLayout)
         self.inputLayout.addLayout(self.formLayout2)
@@ -214,7 +234,10 @@ class DataFittingApp(QMainWindow):
         # 根据下拉选择框的选择，决定是否显示输入框
         if index == 0:
             # 如果选择了第一个选项，则添加输入框
-            self.formLayout2.insertRow(1, self.degreeLabel, self.degreeInput)
+            dInputLayout = QHBoxLayout()
+            dInputLayout.addWidget(self.degreeLabel)
+            dInputLayout.addWidget(self.degreeInput)
+            self.formLayout2.insertLayout(2, dInputLayout)
         else:
             # 如果选择了其他选项，则移除输入框
             self.degreeLabel.setParent(None)
